@@ -1,5 +1,6 @@
 package cz.foglas.enligsh.wordApp.domains
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -16,6 +17,6 @@ class Example(
 
     @ManyToOne
     @JoinColumn(name = "fk_wordid", referencedColumnName = "id")
-    val word: Word
+    val word: Word? = null
 
 )

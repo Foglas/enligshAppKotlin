@@ -11,16 +11,16 @@ class Word private constructor(
 
     @Column(name = "text")
     @NotBlank(message = "Word have to be with text form")
-    val text: String,
+    val text: String?,
 
     @Column(name = "second_form")
-    val secondForm: String,
+    val secondForm: String?,
 
     @Column(name = "third_form")
-    val thirdForm: String,
+    val thirdForm: String?,
 
     @Column(name = "countable")
-    val countable: String,
+    val countable: String?,
 
     @Column(name = "priority")
     val priority: Int = 10,
@@ -33,12 +33,12 @@ class Word private constructor(
     @SequenceGenerator(name = "wordGen", sequenceName = "wordid", allocationSize = 1, initialValue = 1)
     var id: Long? = null,
 
-)
+){
     class Builder(
-        var text: String,
-        var secondForm: String,
-        var thirdForm: String,
-        var countable: String,
+        var text: String?=null,
+        var secondForm: String?=null,
+        var thirdForm: String?=null,
+        var countable: String?=null,
         var priority: Int = 10,
         var examples : List<Example> = listOf()
         ){
@@ -49,6 +49,6 @@ class Word private constructor(
         fun countable(countable: String) = apply { this.countable = countable }
         fun priority(priority: Int) = apply { this.priority = priority }
         fun examples(examples: List<Example>) = apply { this.examples = examples }
-
+        fun build() = Word(this.text, this.secondForm, this.thirdForm, this.countable, this.priority, this.examples)
     }
-
+}
