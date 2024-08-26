@@ -10,7 +10,7 @@ import org.hibernate.annotations.Immutable
 class Word private constructor(
 
     @Column(name = "text")
-    @NotBlank(message = "Word have to be with text form")
+    @field:NotBlank(message = "Word have to be with text form")
     val text: String?,
 
     @Column(name = "second_form")

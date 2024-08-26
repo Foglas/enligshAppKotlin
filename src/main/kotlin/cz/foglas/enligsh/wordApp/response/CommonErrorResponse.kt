@@ -6,21 +6,21 @@ class CommonErrorResponse(
    private val fieldErrors : List<FieldError>
 ) : CommonResponseInf<MutableMap<String, String>> {
 
-   private val validationValoationMap : MutableMap<String, String>
+   private val validationViolationMap : MutableMap<String, String>
 
     init {
-        validationValoationMap = transformErrorListIntoMap(fieldErrors);
+        validationViolationMap = transformErrorListIntoMap(fieldErrors);
     }
 
 
     private fun transformErrorListIntoMap(errors : List<FieldError>) : MutableMap<String,String>{
-        val responseMap = HashMap<String, String>()
-        errors.forEach { innerError -> validationValoationMap[innerError.field] = innerError.defaultMessage }
+        val responseMap : MutableMap<String, String> = mutableMapOf()
+        errors.forEach { innerError -> responseMap[innerError.field] = innerError.defaultMessage }
         return responseMap
     }
 
     override fun getResponse(): MutableMap<String, String> {
-        return validationValoationMap;
+        return validationViolationMap;
     }
 
 }
