@@ -14,7 +14,7 @@ class WordService(
 
 
 
-    override fun createWord(word: InputWordDto): InputWordDto? {
+    override fun createWord(word: InputWordDto): InputWordDto {
         val wordToSave = word.toEntity()
         val wordFromSave = wordRepo.save(wordToSave)
         val wordFromRepo =  wordRepo.findById(wordFromSave.id).orElse(null)

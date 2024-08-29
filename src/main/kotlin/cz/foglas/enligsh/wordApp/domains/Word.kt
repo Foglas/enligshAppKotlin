@@ -7,7 +7,7 @@ import org.hibernate.annotations.Immutable
 @Entity
 @Table(name = "word")
 @Immutable
-class Word private constructor(
+class Word(
 
     @Column(name = "text")
     @field:NotBlank(message = "Word have to be with text form")
@@ -34,6 +34,10 @@ class Word private constructor(
     var id: Long? = null,
 
     ){
+    constructor() : this(null, null, null, null, 10, mutableListOf(), null)
+
+
+
     class Builder(
         var text: String?=null,
         var secondForm: String?=null,

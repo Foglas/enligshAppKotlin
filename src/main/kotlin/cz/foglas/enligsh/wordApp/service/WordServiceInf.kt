@@ -8,4 +8,6 @@ interface WordServiceInf {
     fun deleteWord(id: Long) : Boolean
     fun updateWord(word: Word): Word
     fun getWordById(id: Long): Word
+
+
 }

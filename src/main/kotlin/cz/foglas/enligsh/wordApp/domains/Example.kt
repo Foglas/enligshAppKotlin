@@ -15,10 +15,12 @@ class Example(
     @Column(name = "text")
     val text: String,
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "fk_wordid", referencedColumnName = "id")
     val word: Word? = null
 
 ){
     constructor(text: String, word: Word?) : this(null,text, word )
+    constructor() : this(null,"beforeInit", null )
 }
