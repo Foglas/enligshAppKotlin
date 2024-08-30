@@ -25,7 +25,7 @@ class Word(
     @Column(name = "priority")
     val priority: Int = 10,
 
-    @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val examples : List<Example> = mutableListOf<Example>(),
 
     @Id

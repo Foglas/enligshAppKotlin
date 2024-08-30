@@ -1,16 +1,15 @@
 package cz.foglas.enligsh.wordApp.controller
 
 import InputWordDto
-import cz.foglas.enligsh.wordApp.domains.Example
 import cz.foglas.enligsh.wordApp.domains.Word
+import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
 import cz.foglas.enligsh.wordApp.response.CommonSuccessResponse
 import cz.foglas.enligsh.wordApp.service.WordCollectionSchedulerServiceImpl
 import cz.foglas.enligsh.wordApp.service.WordService
 import jakarta.validation.Valid
+import kotlinx.coroutines.*
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,9 +37,13 @@ class WordController(
     }
 
     @GetMapping("/getSet")
-    fun getWordSet(@RequestBody() number: Int): List<InputWordDto>{
-    log.info { "received request for getting set with number $number" }
-      return  wordCollectionSchedulerServiceImpl.getWordIdCollection(8,number);
+    suspend fun getWordSet(@RequestBody() number: Int): List<InputWordDto> {
+        log.info { "received request for getting set with number $number" }
+
+     return wordCollectionSchedulerServiceImpl.getWordIdCollection(8,number)
+           .map { word -> word.toDto() }.toList()
+
+
     }
 
 

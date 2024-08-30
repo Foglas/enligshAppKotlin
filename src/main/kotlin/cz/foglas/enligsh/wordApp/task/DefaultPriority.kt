@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component
 
 
 class DefaultPriority(
-    @Autowired(required = false)
     override val priorityValue : Int
 ) : Priority {
 

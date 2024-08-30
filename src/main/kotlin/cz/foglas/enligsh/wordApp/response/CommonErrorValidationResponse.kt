@@ -2,7 +2,7 @@ package cz.foglas.enligsh.wordApp.response
 
 import org.springframework.validation.FieldError
 
-class CommonErrorResponse(
+class CommonErrorValidationResponse(
    private val fieldErrors : List<FieldError>
 ) : CommonResponseInf<MutableMap<String, String>> {
 
