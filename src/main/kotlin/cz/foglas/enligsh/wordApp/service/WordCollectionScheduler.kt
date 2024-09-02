@@ -9,6 +9,6 @@ import cz.foglas.enligsh.wordApp.domains.Word
  */
 interface WordCollectionScheduler {
 
-    suspend fun getWordIdCollection(surface: Int, capacity: Int): Collection<Word>
+    suspend fun getWordCollection(surface: Int, capacity: Int): Collection<Word>
 
 }

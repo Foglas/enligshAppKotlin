@@ -1,38 +1,40 @@
 package cz.foglas.enligsh.wordApp.service
 
-import InputWordDto
 import cz.foglas.enligsh.wordApp.domains.Word
 import cz.foglas.enligsh.wordApp.exceptions.NotEnoughWordsException
-import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.repository.WordRepo
 import kotlinx.coroutines.*
-import org.postgresql.util.PSQLException
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cglib.proxy.Dispatcher
+import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Component
-import java.lang.RuntimeException
+import kotlin.math.floor
 
 @Component
 class WordCollectionSchedulerServiceImpl(
+    @Value("\${englishApp.word.set.ratio_know}") val ratioKnow : Float,
     val wordRepo: WordRepo
 ) : WordCollectionScheduler {
 
-
-   override suspend fun getWordIdCollection(surface: Int, capacity: Int): List<Word> {
+    private val log = KotlinLogging.logger("WordCollectionScheduler")
+   override suspend fun getWordCollection(surface: Int, capacity: Int): List<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
-        var knownWords = emptyList<Word>()
-        var unKnownWords = emptyList<Word>()
+        var knownWords = mutableListOf<Word>()
+        var unKnownWords = mutableListOf<Word>()
 
+        val knowCapacity = floor(ratioKnow*capacity).toInt()
+        val unknownCapacity = capacity-knowCapacity
+
+       log.info { "Set: total capacity: $capacity knowCapacity: $knowCapacity unknownCapacity: $unknownCapacity" }
 
        val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
-              knownWords  = wordRepo.getWordSet(surface,capacity)
-
+          //TODO need to do additional function which return know words
+           knownWords  = wordRepo.getWellKnownWords(surface,knowCapacity)
         }
 
        val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
-           unKnownWords =  wordRepo.getWordSet(surface,capacity)
+           unKnownWords =  wordRepo.getRandomUnknownWords(surface,unknownCapacity)
         }
 
        try {
@@ -42,11 +44,21 @@ class WordCollectionSchedulerServiceImpl(
            throw NotEnoughWordsException()
        }
 
+       val gettedListSize = knownWords.size + unKnownWords.size
+
+       if (gettedListSize < capacity) {
+           val additionalWordCapacity = capacity - gettedListSize
+           knownWords.addAll(wordRepo.getWords(additionalWordCapacity))
+           log.info { "Set after getting: total capacity: $capacity knowCapacity: ${knownWords.size + additionalWordCapacity} unknownCapacity: ${unKnownWords.size}" }
+       }
+
         val responseWords = mutableListOf<Word>().apply {
             addAll(knownWords)
             addAll(unKnownWords)
             shuffle()
         }
+
+
 
         return responseWords
     }

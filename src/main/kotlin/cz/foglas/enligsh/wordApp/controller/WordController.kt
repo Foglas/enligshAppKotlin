@@ -1,7 +1,6 @@
 package cz.foglas.enligsh.wordApp.controller
 
 import InputWordDto
-import cz.foglas.enligsh.wordApp.domains.Word
 import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
 import cz.foglas.enligsh.wordApp.response.CommonSuccessResponse
@@ -40,7 +39,7 @@ class WordController(
     suspend fun getWordSet(@RequestBody() number: Int): List<InputWordDto> {
         log.info { "received request for getting set with number $number" }
 
-     return wordCollectionSchedulerServiceImpl.getWordIdCollection(8,number)
+     return wordCollectionSchedulerServiceImpl.getWordCollection(8,number)
            .map { word -> word.toDto() }.toList()
 
 
