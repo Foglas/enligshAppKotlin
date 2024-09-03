@@ -8,16 +8,21 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import kotlin.math.floor
 
-@Component
+@Service
 class WordCollectionSchedulerServiceImpl(
     @Value("\${englishApp.word.set.ratio_know}") val ratioKnow : Float,
+    @Value("\${englishApp.word.set.surface}") val surface: Int,
     val wordRepo: WordRepo
 ) : WordCollectionScheduler {
 
     private val log = KotlinLogging.logger("WordCollectionScheduler")
-   override suspend fun getWordCollection(surface: Int, capacity: Int): List<Word> {
+
+
+    //TODO need to add something like fuzzy controlling, only two values are too low
+    override suspend fun getWordCollection(capacity: Int): List<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
         var knownWords = mutableListOf<Word>()
@@ -29,7 +34,6 @@ class WordCollectionSchedulerServiceImpl(
        log.info { "Set: total capacity: $capacity knowCapacity: $knowCapacity unknownCapacity: $unknownCapacity" }
 
        val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
-          //TODO need to do additional function which return know words
            knownWords  = wordRepo.getWellKnownWords(surface,knowCapacity)
         }
 
@@ -57,8 +61,6 @@ class WordCollectionSchedulerServiceImpl(
             addAll(unKnownWords)
             shuffle()
         }
-
-
 
         return responseWords
     }

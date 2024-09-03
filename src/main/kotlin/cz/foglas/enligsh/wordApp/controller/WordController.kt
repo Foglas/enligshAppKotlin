@@ -4,6 +4,7 @@ import InputWordDto
 import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
 import cz.foglas.enligsh.wordApp.response.CommonSuccessResponse
+import cz.foglas.enligsh.wordApp.service.WordCollectionFuzzySchedulerService
 import cz.foglas.enligsh.wordApp.service.WordCollectionSchedulerServiceImpl
 import cz.foglas.enligsh.wordApp.service.WordService
 import jakarta.validation.Valid
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("\${englishApp.api.requestPath}")
 class WordController(
    val wordService: WordService,
-   val wordCollectionSchedulerServiceImpl: WordCollectionSchedulerServiceImpl
+   val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -36,10 +37,10 @@ class WordController(
     }
 
     @GetMapping("/getSet")
-    suspend fun getWordSet(@RequestBody() number: Int): List<InputWordDto> {
-        log.info { "received request for getting set with number $number" }
+    suspend fun getWordSet(@RequestBody() capacity: Int): List<InputWordDto> {
+        log.info { "received request for getting set with number $capacity" }
 
-     return wordCollectionSchedulerServiceImpl.getWordCollection(8,number)
+     return wordCollectionSchedulerServiceImpl.getWordCollection(capacity)
            .map { word -> word.toDto() }.toList()
 
 
