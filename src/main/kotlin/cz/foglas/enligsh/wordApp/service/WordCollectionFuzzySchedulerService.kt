@@ -14,40 +14,31 @@ import kotlin.math.roundToInt
 
 @Service
 class WordCollectionFuzzySchedulerService(
-    @Value("\${englishApp.word.set.lower_surface}") val lowerSurface: Int,
-    @Value("\${englishApp.word.set.surface}") val surface: Int,
-    @Value("\${englishApp.word.set.higher_surface}") val higherSurface: Int,
-    val fuzzyWord: WordFuzzyConfig,
+    val fuzzyWordConf: WordFuzzyConfig,
     val wordRepo: WordRepo
 ) : WordCollectionScheduler {
 
     val log = KotlinLogging.logger("FuzzyScheduler")
+    val pattern = Regex(".*_[^_]+_.*")
 
     override suspend fun getWordCollection(capacity: Int): Collection<Word>{
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
 
-        val fuzzyWord = fuzzyWord.getValues()
+        val fuzzyWord = fuzzyWordConf.getValues()
 
        var list : MutableList<Deferred<Any>> = fuzzyWord.map{
                 element ->
             scope.async(context + CoroutineName(element.key)){
               val innerCapacity = (element.value * capacity).roundToInt()
                 log.info { "${element.key}: $innerCapacity" }
-              when(element.key){
-                  WordFuzzy.RATIO_UNKNOWN.name -> {
+                val range = fuzzyWordConf.getRange(WordFuzzy.valueOf(element.key))
+              when {
+                  element.key.matches(pattern) -> wordRepo.getRandomWordsWithRange( range.a, range.b, innerCapacity)
+                  element.key == WordFuzzy.RATIO_KNOW.name -> wordRepo.getKnownWords(range.b, innerCapacity)
+                  element.key == WordFuzzy.RATIO_UNKNOWN.name -> wordRepo.getRandomUnknownWords(range.a, innerCapacity)
 
-                      wordRepo.getRandomUnknownWords(7, innerCapacity)
-                  }
-                  WordFuzzy.RATIO_KNOW.name -> {
-                      wordRepo.getRandomWordsWithRange(6,8, innerCapacity)
-                  }
-                  WordFuzzy.RATIO_MEDIUM_KNOW.name -> {
-                      wordRepo.getRandomUnknownWords(7, innerCapacity)
-                  }
-                  WordFuzzy.RATIO_WELL_KNOWN.name -> {
-                      wordRepo.getRandomWordsWithRange(6,8, innerCapacity)
-                  } else -> log.info { "Ratio doesn´t recognize" }
+                  else -> log.info { "Ratio doesn´t recognize" }
               }
           }
        }.toMutableList()

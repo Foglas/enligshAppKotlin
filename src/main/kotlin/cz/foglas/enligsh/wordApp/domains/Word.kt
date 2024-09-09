@@ -6,27 +6,26 @@ import org.hibernate.annotations.Immutable
 
 @Entity
 @Table(name = "word")
-@Immutable
 class Word(
 
     @Column(name = "text")
     @field:NotBlank(message = "Word have to be with text form")
-    val text: String?,
+    var text: String?,
 
     @Column(name = "second_form")
-    val secondForm: String?,
+    var secondForm: String?,
 
     @Column(name = "third_form")
-    val thirdForm: String?,
+    var thirdForm: String?,
 
     @Column(name = "countable")
-    val countable: String?,
+    var countable: String?,
 
     @Column(name = "priority")
-    val priority: Int = 10,
+    var priority: Int = 10,
 
     @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val examples : List<Example> = mutableListOf<Example>(),
+    var examples : List<Example> = mutableListOf<Example>(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wordGen")

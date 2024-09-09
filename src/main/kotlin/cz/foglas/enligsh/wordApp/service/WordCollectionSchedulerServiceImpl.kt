@@ -7,7 +7,6 @@ import kotlinx.coroutines.*
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.orm.jpa.JpaSystemException
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import kotlin.math.floor
 
@@ -21,7 +20,6 @@ class WordCollectionSchedulerServiceImpl(
     private val log = KotlinLogging.logger("WordCollectionScheduler")
 
 
-    //TODO need to add something like fuzzy controlling, only two values are too low
     override suspend fun getWordCollection(capacity: Int): List<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
@@ -34,7 +32,7 @@ class WordCollectionSchedulerServiceImpl(
        log.info { "Set: total capacity: $capacity knowCapacity: $knowCapacity unknownCapacity: $unknownCapacity" }
 
        val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
-           knownWords  = wordRepo.getWellKnownWords(surface,knowCapacity)
+           knownWords  = wordRepo.getKnownWords(surface,knowCapacity)
         }
 
        val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
