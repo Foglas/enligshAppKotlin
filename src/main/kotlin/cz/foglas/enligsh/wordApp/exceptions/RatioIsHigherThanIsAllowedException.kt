@@ -2,7 +2,7 @@ package cz.foglas.enligsh.wordApp.exceptions
 
 import kotlin.math.floor
 
-class RatioIsHigherThanIsAllowed(
+class RatioIsHigherThanIsAllowedException(
     private val totalRatioValue : Float
 ) : RuntimeException() {
 

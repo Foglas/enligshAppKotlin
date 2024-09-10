@@ -8,7 +8,7 @@ import cz.foglas.enligsh.wordApp.validationAnnotation.HigherThanZero
  */
 class Priority(private val strategy: PriorityStrategy,
                @HigherThanZero
-               val priorityValue : Int = 0) {
+               val priorityValue : Int = 20) {
    private val strategyClazz : PriorityStrategyInf
 
     init {

@@ -1,6 +1,6 @@
 package cz.foglas.enligsh.wordApp.validationAnnotation
 
-import cz.foglas.enligsh.wordApp.exceptions.MismatchPriorityValue
+import cz.foglas.enligsh.wordApp.exceptions.MismatchPriorityValueException
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 
@@ -9,7 +9,7 @@ class HigherThanZeroValidator: ConstraintValidator<HigherThanZero, Int> {
         return if (p0 != null && p0 >0){
             true
         } else{
-            throw MismatchPriorityValue(p0?:-1)
+            throw MismatchPriorityValueException(p0?:-1)
         }
     }
 

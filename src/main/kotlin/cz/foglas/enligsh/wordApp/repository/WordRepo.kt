@@ -6,6 +6,8 @@ import org.springframework.data.repository.CrudRepository
 
 interface WordRepo : CrudRepository<Word, Long> {
 
+    fun getWordById(id: Long) : Word
+
     @Query("SELECT * FROM getrandomwordwellknown(:surface, :capacity)", nativeQuery = true)
     fun getKnownWords(surface: Int, capacity: Int) : MutableList<Word>
 
@@ -18,5 +20,4 @@ interface WordRepo : CrudRepository<Word, Long> {
     @Query("SELECT * FROM getRandomWords(:capacity)", nativeQuery = true)
     fun getWords(capacity: Int) : MutableList<Word>
 
-    fun getWordById(id: Long) : Word
 }

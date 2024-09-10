@@ -1,11 +1,7 @@
 package cz.foglas.enligsh.wordApp.service
 
-import InputWordDto
 import cz.foglas.enligsh.wordApp.domains.Word
-import cz.foglas.enligsh.wordApp.exceptions.MismatchPriorityValue
-import cz.foglas.enligsh.wordApp.exceptions.WordDoesntFind
-import cz.foglas.enligsh.wordApp.mapping.toDto
-import cz.foglas.enligsh.wordApp.mapping.toEntity
+import cz.foglas.enligsh.wordApp.exceptions.WordNotFoundException
 import cz.foglas.enligsh.wordApp.repository.WordRepo
 import cz.foglas.enligsh.wordApp.task.priority.Priority
 import cz.foglas.enligsh.wordApp.task.priority.PriorityStrategy
@@ -24,7 +20,7 @@ class WordService(
      */
     override fun createWord(word: Word): Word {
         val wordFromSave = wordRepo.save(word)
-        val wordFromRepo =  wordRepo.findById(wordFromSave.id)?: throw WordDoesntFind("Word didn't saved")
+        val wordFromRepo =  wordRepo.findById(wordFromSave.id)?: throw WordNotFoundException("Word wasn't saved")
         return wordFromRepo.get()
     }
 
@@ -34,12 +30,11 @@ class WordService(
     }
 
     override fun updateWord(word: Word): Word {
-        TODO("Not yet implemented")
+       return wordRepo.save(word)
     }
 
     override fun getWordById(id: Long): Word {
-        val context = Dispatchers.IO + CoroutineName("FindWordById")
-        return wordRepo.getWordById(20)
+        return wordRepo.getWordById(id)
     }
 
     /**
@@ -48,8 +43,9 @@ class WordService(
      * @param value is for the computation of new priority
      */
     override suspend fun increasePriority(value: Int, id: Long): Word {
-           var priority = Priority(PriorityStrategy.LINEAR)
-           val word = basicPriorityOperation(id) { priority.plus(value) };
+           val word = basicPriorityOperation(id) {actualPriority ->
+               var priority = Priority(PriorityStrategy.LINEAR, actualPriority)
+               priority.plus(value) };
            return updateWord(word)
     }
 
@@ -59,15 +55,17 @@ class WordService(
      * @param value is for the computation of new priority
      */
     override suspend fun decreasePriority(value: Int, id: Long): Word {
-        var priority = Priority(PriorityStrategy.LINEAR)
-        val word = basicPriorityOperation(id) {  priority.minus(value) };
+        val word = basicPriorityOperation(id) { actualPriority ->
+            var priority = Priority(PriorityStrategy.LINEAR, actualPriority)
+            priority.minus(value)
+        };
         return updateWord(word)
     }
 
 
-    private fun basicPriorityOperation(id: Long, operation: () -> Priority): Word{
-        var priority = operation()
+    private fun basicPriorityOperation(id: Long, operation: (Int) -> Priority): Word{
         val word =  getWordById(id)
+        var priority = operation(word.priority)
         word.apply {
             this.priority = priority.priorityValue
         }

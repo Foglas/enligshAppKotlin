@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("\${englishApp.api.requestPath}")
 class WordController(
-   val wordService: WordService,
-   val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
+    private val wordService: WordService,
+    private val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -35,8 +35,7 @@ class WordController(
     fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>>{
         log.info {  "word received" }
 
-        val responseWord = wordService.createWord(word.toEntity())
-
+         val responseWord = wordService.createWord(word.toEntity())
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
@@ -49,9 +48,13 @@ class WordController(
     }
 
     @PostMapping("/priority/plus")
-    suspend fun increasePriority(@RequestParam("id") id: Long){
-        wordService.increasePriority(0, id)
+    suspend fun increasePriority(@RequestBody id: Long){
+        wordService.increasePriority(1, id)
     }
 
+    @PostMapping("/priority/minus")
+    suspend fun decreasePriority(@RequestBody id: Long){
+        wordService.decreasePriority(1, id)
+    }
 
 }

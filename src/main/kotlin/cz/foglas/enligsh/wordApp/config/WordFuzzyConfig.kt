@@ -1,7 +1,7 @@
 package cz.foglas.enligsh.wordApp.config
 
 import cz.foglas.enligsh.wordApp.data.Range
-import cz.foglas.enligsh.wordApp.exceptions.RatioIsHigherThanIsAllowed
+import cz.foglas.enligsh.wordApp.exceptions.RatioIsHigherThanIsAllowedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 
@@ -19,7 +19,7 @@ open class WordFuzzyConfig: Fuzzy<Map<String, Float>> {
     init {
         val total_ratio = ratioKnown + ratioMediumKnown + ratioLessKnown + ratioUnknown
         if (total_ratio > 1){
-            throw RatioIsHigherThanIsAllowed(total_ratio)
+            throw RatioIsHigherThanIsAllowedException(total_ratio)
         }
     }
 
