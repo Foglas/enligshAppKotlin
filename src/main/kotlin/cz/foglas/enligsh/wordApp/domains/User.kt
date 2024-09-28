@@ -1,6 +1,7 @@
 package cz.foglas.enligsh.wordApp.domains
 
 import jakarta.persistence.*
+import org.antlr.v4.runtime.atn.SemanticContext.Empty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
@@ -17,22 +18,30 @@ class User(
     val nickname: String,
 
     @Column
-    val email: String
+    val email: String,
+
+    @Column
+    private var password: String
+
 
 ) : UserDetails {
-    constructor() : this(null, "", "")
+    constructor() : this(null, "", "", "")
 
 
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        TODO("Not yet implemented")
+        return emptyList<GrantedAuthority>().toMutableList()
     }
 
     override fun getPassword(): String {
-        TODO("Not yet implemented")
+       return password
+    }
+
+    fun setPassword(password: String){
+        this.password = password
     }
 
     override fun getUsername(): String {
-        TODO("Not yet implemented")
+      return email;
     };
 }

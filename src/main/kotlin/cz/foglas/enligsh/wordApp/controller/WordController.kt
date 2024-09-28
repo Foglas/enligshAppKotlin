@@ -6,11 +6,13 @@ import cz.foglas.enligsh.wordApp.mapping.toEntity
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
 import cz.foglas.enligsh.wordApp.response.CommonSuccessResponse
 import cz.foglas.enligsh.wordApp.service.WordCollectionFuzzySchedulerService
+import cz.foglas.enligsh.wordApp.service.WordCollectionScheduler
 import cz.foglas.enligsh.wordApp.service.WordService
 import jakarta.validation.Valid
 import kotlinx.coroutines.*
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("\${englishApp.api.requestPath}")
 class WordController(
     private val wordService: WordService,
-    private val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
+    private val wordCollectionSchedulerServiceImpl: WordCollectionScheduler
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -38,11 +40,17 @@ class WordController(
     }
 
     @GetMapping("/private/getSet/{capacity}")
-    suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
+    fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
         log.info { "received request for getting set with number $capacity" }
+        val response = wordCollectionSchedulerServiceImpl.getWordCollection(capacity)
+            .map { word -> word.toDto() }.toList()
+        log.info { "authenticated in controller? ${SecurityContextHolder.getContext().authentication.isAuthenticated}" }
+        return response
+    }
 
-     return wordCollectionSchedulerServiceImpl.getWordCollection(capacity)
-           .map { word -> word.toDto() }.toList()
+    @GetMapping("/private/text")
+    fun getTest(): String{
+        return "hello"
     }
 
     @PostMapping("/private/priority/plus")
@@ -54,5 +62,4 @@ class WordController(
     suspend fun decreasePriority(@RequestBody id: Long){
         wordService.decreasePriority(1, id)
     }
-
 }
