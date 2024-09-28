@@ -29,7 +29,7 @@ class WordController(
     private val log = KotlinLogging.logger {}
 
 
-    @PostMapping("/createWord")
+    @PostMapping("/private/createWord")
     fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>>{
         log.info {  "word received" }
 
@@ -37,7 +37,7 @@ class WordController(
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
-    @GetMapping("/getSet/{capacity}")
+    @GetMapping("/private/getSet/{capacity}")
     suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
         log.info { "received request for getting set with number $capacity" }
 
@@ -45,12 +45,12 @@ class WordController(
            .map { word -> word.toDto() }.toList()
     }
 
-    @PostMapping("/priority/plus")
+    @PostMapping("/private/priority/plus")
     suspend fun increasePriority(@RequestBody id: Long){
         wordService.increasePriority(1, id)
     }
 
-    @PostMapping("/priority/minus")
+    @PostMapping("/private/priority/minus")
     suspend fun decreasePriority(@RequestBody id: Long){
         wordService.decreasePriority(1, id)
     }
