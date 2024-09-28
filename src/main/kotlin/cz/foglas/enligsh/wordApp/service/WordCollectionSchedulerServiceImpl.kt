@@ -33,11 +33,11 @@ class WordCollectionSchedulerServiceImpl(
 
        val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
            knownWords  = wordRepo.getKnownWords(surface,knowCapacity)
-        }
+       }
 
        val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
            unKnownWords =  wordRepo.getRandomUnknownWords(surface,unknownCapacity)
-        }
+       }
 
        try {
            unknownWordsJob.await()

@@ -2,7 +2,6 @@ package cz.foglas.enligsh.wordApp.config
 
 import cz.foglas.enligsh.wordApp.data.Range
 import cz.foglas.enligsh.wordApp.exceptions.RatioIsHigherThanIsAllowedException
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 
 @Configuration
@@ -11,10 +10,6 @@ open class WordFuzzyConfig: Fuzzy<Map<String, Float>> {
     private val ratioMediumKnown: Float = 0.3f
     private val ratioLessKnown: Float = 0.3f
     private val ratioUnknown: Float = 0.2f
-
-    @Value("\${englishApp.word.priority.max}")
-    private val maxPriorityValue: Int = 20
-    private val minPriorityValue: Int = 1
 
     init {
         val total_ratio = ratioKnown + ratioMediumKnown + ratioLessKnown + ratioUnknown

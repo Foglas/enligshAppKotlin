@@ -58,7 +58,7 @@ class WordService(
         val word = basicPriorityOperation(id) { actualPriority ->
             var priority = Priority(PriorityStrategy.LINEAR, actualPriority)
             priority.minus(value)
-        };
+        }
         return updateWord(word)
     }
 
