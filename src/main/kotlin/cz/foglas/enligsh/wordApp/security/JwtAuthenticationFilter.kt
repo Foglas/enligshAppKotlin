@@ -66,57 +66,5 @@ class JwtAuthenticationFilter(
                 chain.filter(exchange)
                     .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)))
             }
-
-         /*   .doOnSuccess {
-                logger.info { "Authentication successful for token: $token" }
-            }
-            .doOnError { ex ->
-                logger.error("Authentication failed: ${ex.message}", ex)
-            }
-
-          */
     }
-
-
-
-
-
-/*
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
-    ) {
-        val authHeader : String? = request.getHeader("Authorization")
-        logger.info(authHeader)
-
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request, response)
-            return
-        }
-
-        try {
-            val token = authHeader.split(" ")[1]
-            val userEmail = jwtService.extractUsername(token)
-
-            val authentication = SecurityContextHolder.getContext().authentication
-
-            if (userEmail != null && authentication == null){
-                val user = userDetailsService.loadUserByUsername(userEmail)
-
-                if (jwtService.isValid(token, user)){
-                   val authToken = UsernamePasswordAuthenticationToken(user, null, user.authorities)
-                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                    SecurityContextHolder.getContext().authentication = authToken
-                }
-            }
-
-            filterChain.doFilter(request, response)
-
-        } catch (ex: Exception){
-            handlerExceptionResolver.resolveException(request, response, null, ex)
-        }
-    }
-
- */
 }
