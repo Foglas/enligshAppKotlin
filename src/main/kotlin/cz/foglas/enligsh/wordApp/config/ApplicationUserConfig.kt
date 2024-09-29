@@ -5,12 +5,12 @@ import mu.KotlinLogging
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
+import org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.core.userdetails.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import reactor.core.publisher.Mono
 
 @Configuration
 open class ApplicationUserConfig(
@@ -18,9 +18,9 @@ open class ApplicationUserConfig(
 ) {
     val logger = KotlinLogging.logger("appuserconfig")
     @Bean
-    open fun userDetailsService(): UserDetailsService {
-        return UserDetailsService { username ->
-            userRepo.findByEmail(username) ?: throw UsernameNotFoundException("User not found")
+    open fun userDetailsService(): ReactiveUserDetailsService {
+        return ReactiveUserDetailsService { username ->
+            Mono.just(userRepo.findByEmail(username)) ?: throw UsernameNotFoundException("User not found")
         }
     }
 
@@ -29,19 +29,12 @@ open class ApplicationUserConfig(
         return BCryptPasswordEncoder()
     }
 
-
     @Bean
-    open fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-        logger.info { "authentication manager" }
-        return config.authenticationManager
-    }
-
-    @Bean
-    open fun authenticationProvider(): AuthenticationProvider {
-        val authProvider = DaoAuthenticationProvider()
+    open fun authenticationProvider():  UserDetailsRepositoryReactiveAuthenticationManager {
+        val authProvider = UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService())
         logger.info { "authenticationProvider" }
-        authProvider.setUserDetailsService(userDetailsService())
         authProvider.setPasswordEncoder(bcryptPasswordEncoder())
+    logger.info { "manager $authProvider" }
         return authProvider
     }
 

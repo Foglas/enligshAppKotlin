@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 
 @RestController
 @RequestMapping("\${englishApp.api.requestPath}")
 class WordController(
     private val wordService: WordService,
-    private val wordCollectionSchedulerServiceImpl: WordCollectionScheduler
+    private val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -40,12 +41,11 @@ class WordController(
     }
 
     @GetMapping("/private/getSet/{capacity}")
-    fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
+    suspend fun getWordSet(@PathVariable capacity: Int): Mono<List<InputWordDto>> {
         log.info { "received request for getting set with number $capacity" }
         val response = wordCollectionSchedulerServiceImpl.getWordCollection(capacity)
             .map { word -> word.toDto() }.toList()
-        log.info { "authenticated in controller? ${SecurityContextHolder.getContext().authentication.isAuthenticated}" }
-        return response
+        return Mono.just(response)
     }
 
     @GetMapping("/private/text")

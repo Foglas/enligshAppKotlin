@@ -9,51 +9,56 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
+import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity.http
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
+import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.reactive.config.CorsRegistry
+import org.springframework.web.reactive.config.WebFluxConfigurer
 import java.beans.Customizer
 
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 open class SecurityConfig(
-   val authenticationProvider: AuthenticationProvider,
-   val jwtAuthenticationFilter: JwtAuthenticationFilter
-){
+    val jwtAuthenticationFilter: JwtAuthenticationFilter
+) : WebFluxConfigurer {
 
 
     @Bean
-    open fun filterChain(http: HttpSecurity): SecurityFilterChain{
+    open fun filterChain(http: ServerHttpSecurity): SecurityWebFilterChain? {
 
         return http.cors { }
-            .csrf { it.ignoringRequestMatchers("/**") }
-          .authorizeHttpRequests { auth -> auth
-          .requestMatchers("/englishApp/api/public/**").permitAll()
-          .requestMatchers("/englishApp/api/private/**").authenticated()
-          }
-          .sessionManagement {
-              it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-          }
-          .authenticationProvider(authenticationProvider)
-          .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-          .build()
+            .csrf { it.disable() }
+            .authorizeExchange { auth ->
+                auth
+                    .pathMatchers("/englishApp/api/public/**").permitAll()
+                    .pathMatchers("/englishApp/api/private/**").authenticated()
+            }
+            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+            .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)
+            .build()
     }
 
-    @Bean
-    open fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
-        configuration.allowedHeaders = listOf("Authorization", "Content-Type")
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
-        return source
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE")
     }
-
 }
+
+
+
+
+
+
+
+

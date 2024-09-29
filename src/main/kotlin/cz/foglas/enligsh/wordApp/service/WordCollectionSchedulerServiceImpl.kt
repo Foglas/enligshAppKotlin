@@ -20,7 +20,7 @@ class WordCollectionSchedulerServiceImpl(
     private val log = KotlinLogging.logger("WordCollectionScheduler")
 
 
-    override  fun getWordCollection(capacity: Int): List<Word> {
+    override suspend fun getWordCollection(capacity: Int): List<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
         var knownWords = mutableListOf<Word>()

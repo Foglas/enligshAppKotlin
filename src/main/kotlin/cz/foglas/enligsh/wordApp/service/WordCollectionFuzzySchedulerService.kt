@@ -25,13 +25,12 @@ class WordCollectionFuzzySchedulerService(
     val pattern = Regex(".*_[^_]+_.*")
 
 
-    override fun getWordCollection(capacity: Int): Collection<Word>{
-     /*   val context = Dispatchers.IO
+    override suspend fun getWordCollection(capacity: Int): Collection<Word>{
+        val context = Dispatchers.IO
         val scope = CoroutineScope(context)
 
         val fuzzyWord = fuzzyWordConf.getValues()
 
-        log.info { "authenticated in service? ${SecurityContextHolder.getContext().authentication.isAuthenticated}" }
 
        var list : MutableList<Deferred<Any>> = fuzzyWord.map{
                 element ->
@@ -69,13 +68,10 @@ class WordCollectionFuzzySchedulerService(
       }
 
         log.info { "Actual size of words = ${finalListOfWords.size}" }
-        log.info { "authenticated in service? ${SecurityContextHolder.getContext().authentication.isAuthenticated}" }
-
-
 
         return finalListOfWords
 
-      */
+
 
         return emptyList()
     }

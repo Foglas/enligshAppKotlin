@@ -3,6 +3,7 @@ package cz.foglas.enligsh.wordApp.service
 import cz.foglas.enligsh.wordApp.domains.User
 import cz.foglas.enligsh.wordApp.repository.UserRepo
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class AuthenticationService(
    val userRepo: UserRepo,
-   val authenticationManager: AuthenticationManager,
+   val authenticationManager: ReactiveAuthenticationManager,
    val passwordEncoder: BCryptPasswordEncoder
 ) : AuthenticationServiceInf {
 
@@ -25,8 +26,10 @@ class AuthenticationService(
         return userRepo.findByEmail(email)?:throw UsernameNotFoundException("Not found")
     }
 
+
     override fun logout(token: String) {
         TODO("Not yet implemented")
     }
 
 }
+
