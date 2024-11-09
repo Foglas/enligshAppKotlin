@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class WordExceptionHandler {
+open class WordExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler( MethodArgumentNotValidException::class)
@@ -23,12 +23,5 @@ class WordExceptionHandler {
     @ExceptionHandler( NotEnoughWordsException::class)
     open fun notEnoughWordHandler(ex: NotEnoughWordsException): ResponseEntity<Any> {
         return ResponseEntity.badRequest().body(CommonErrorTextResponse(ex.message))
-    }
-
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler( Exception::class)
-    open fun securityValoations(ex: Exception): ResponseEntity<Any> {
-        return ResponseEntity.badRequest().body("Exception")
     }
 }
