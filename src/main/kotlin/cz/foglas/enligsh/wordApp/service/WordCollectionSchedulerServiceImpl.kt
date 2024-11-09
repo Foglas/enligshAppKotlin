@@ -31,22 +31,22 @@ class WordCollectionSchedulerServiceImpl(
 
        log.info { "Set: total capacity: $capacity knowCapacity: $knowCapacity unknownCapacity: $unknownCapacity" }
 
-      // val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
+       val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
            knownWords  = wordRepo.getKnownWords(surface,knowCapacity)
-      // }
+       }
 
-      // val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
+       val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
            unKnownWords =  wordRepo.getRandomUnknownWords(surface,unknownCapacity)
-      // }
+       }
 
-      /* try {
+       try {
            unknownWordsJob.await()
            knowWordsJob.await()
        }catch (ex: JpaSystemException){
            throw NotEnoughWordsException()
        }
 
-       */
+
 
        val gettedListSize = knownWords.size + unKnownWords.size
 

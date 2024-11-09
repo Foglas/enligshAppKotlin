@@ -1,7 +1,7 @@
 package cz.foglas.enligsh.wordApp.controller
 
-import cz.foglas.enligsh.wordApp.data.LoginUserDto
-import cz.foglas.enligsh.wordApp.data.RegisterUserDto
+import cz.foglas.enligsh.wordApp.data.security.LoginUserDto
+import cz.foglas.enligsh.wordApp.data.security.RegisterUserDto
 import cz.foglas.enligsh.wordApp.domains.User
 import cz.foglas.enligsh.wordApp.repository.UserRepo
 import cz.foglas.enligsh.wordApp.service.AuthenticationServiceInf

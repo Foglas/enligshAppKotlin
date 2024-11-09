@@ -13,7 +13,7 @@ import java.util.*
 
 @Service
 class JwtService {
-    val secretKey: String = "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b"
+    val secretKey: String = "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007bKs33Lds932"
     val expiration : Long = 3600000
 
     fun generateToken(user: User): String{
@@ -39,9 +39,9 @@ class JwtService {
        return Keys.hmacShaKeyFor(keyBytes)
     }
 
-    fun isValid(token: String, user: UserDetails): Boolean{
+    fun isValid(token: String, user: UserDetails): Boolean {
        val username = extractUsername(token)
-       return (username.equals(user.username)&& !isExpired(token))
+       return (username == user.username && !isExpired(token))
     }
 
     fun isExpired(token: String): Boolean{
@@ -49,12 +49,12 @@ class JwtService {
     }
 
     fun extractExpiration(token: String): Date{
-     var extractAll = extractAllClaims(token)
+        val extractAll = extractAllClaims(token)
         return extractAll.expiration
     }
 
     fun extractUsername(token: String): String{
-        var extractAll = extractAllClaims(token)
+        val extractAll = extractAllClaims(token)
         return extractAll.subject
     }
 

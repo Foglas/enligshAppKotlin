@@ -1,4 +1,4 @@
-package cz.foglas.enligsh.wordApp.data
+package cz.foglas.enligsh.wordApp.data.security
 
 data class LoginUserDto(
     val email: String,

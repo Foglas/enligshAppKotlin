@@ -1,4 +1,4 @@
-package cz.foglas.enligsh.wordApp.data
+package cz.foglas.enligsh.wordApp.data.security
 
 data class RegisterUserDto(
     val nickname: String,
