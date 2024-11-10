@@ -4,7 +4,7 @@ import cz.foglas.enligsh.wordApp.validationAnnotation.HigherThanZero
 
 /**
  * Class which encapsulate logic of different priority strategies. Strategy is selected
- * on the PriorityStategy enum input
+ * on the PriorityStrategy enum input
  */
 class Priority(private val strategy: PriorityStrategy,
                @HigherThanZero

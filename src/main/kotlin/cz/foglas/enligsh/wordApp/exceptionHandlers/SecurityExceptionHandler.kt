@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.SignatureException
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebExceptionHandler
@@ -19,6 +20,10 @@ import reactor.core.publisher.Mono
 class SecurityExceptionHandler(
     val objectMapper: ObjectMapper,
 ) : WebExceptionHandler{
+
+    companion object {
+        val context = ReactiveSecurityContextHolder.getContext()
+    }
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         exchange.response.headers.contentType = MediaType.APPLICATION_JSON

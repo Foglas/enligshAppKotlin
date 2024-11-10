@@ -1,37 +1,27 @@
 package cz.foglas.enligsh.wordApp.config
 
 import cz.foglas.enligsh.wordApp.security.JwtAuthenticationFilter
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Security
+import cz.foglas.enligsh.wordApp.service.JwtService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.config.web.server.ServerHttpSecurity.http
-import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.ExceptionTranslationFilter
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.CorsRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
-import java.beans.Customizer
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableReactiveMethodSecurity
 open class SecurityConfig(
-    val jwtAuthenticationFilter: JwtAuthenticationFilter
+    val jwtService: JwtService,
+    val userDetails: ReactiveUserDetailsService,
+    val authenticationManager: UserDetailsRepositoryReactiveAuthenticationManager,
 ) : WebFluxConfigurer {
 
 
@@ -40,13 +30,16 @@ open class SecurityConfig(
 
         return http.cors { }
             .csrf { it.disable() }
+            .addFilterAt(
+                JwtAuthenticationFilter(jwtService, authenticationManager, userDetails),
+                SecurityWebFiltersOrder.AUTHENTICATION
+            )
             .authorizeExchange { auth ->
                 auth
                     .pathMatchers("/englishApp/api/public/**").permitAll()
                     .pathMatchers("/englishApp/api/private/**").authenticated()
             }
             .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-            .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)
             .build()
     }
 
