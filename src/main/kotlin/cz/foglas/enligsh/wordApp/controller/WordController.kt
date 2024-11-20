@@ -26,7 +26,7 @@ open class WordController(
     }
 
     @PostMapping("/private/createWord")
-    fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>>{
+    open fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>> {
         log.info {  "word received" }
 
          val responseWord = wordService.createWord(word.toEntity())

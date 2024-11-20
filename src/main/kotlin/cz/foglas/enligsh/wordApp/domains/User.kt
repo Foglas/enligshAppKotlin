@@ -2,7 +2,6 @@ package cz.foglas.enligsh.wordApp.domains
 
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
@@ -30,8 +29,8 @@ class User(
 
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        //  return emptyList<GrantedAuthority>().toMutableList()
-        return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"))
+        return emptyList<GrantedAuthority>().toMutableList()
+        //  return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"))
     }
 
     override fun getPassword(): String {
