@@ -31,7 +31,7 @@ class User(
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         //  return emptyList<GrantedAuthority>().toMutableList()
-        return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"))
+        return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"), SimpleGrantedAuthority("READ_PRIVILEGES"))
     }
 
     override fun getPassword(): String {

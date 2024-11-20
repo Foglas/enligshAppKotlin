@@ -4,11 +4,9 @@ import cz.foglas.enligsh.wordApp.repository.UserRepo
 import mu.KotlinLogging
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
-import org.springframework.security.authorization.AuthenticatedReactiveAuthorizationManager
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
-import org.springframework.security.core.userdetails.*
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import reactor.core.publisher.Mono
 
@@ -17,6 +15,7 @@ open class ApplicationUserConfig(
    val userRepo: UserRepo
 ) {
     val logger = KotlinLogging.logger("appuserconfig")
+
     @Bean
     open fun userDetailsService(): ReactiveUserDetailsService {
         return ReactiveUserDetailsService { username ->

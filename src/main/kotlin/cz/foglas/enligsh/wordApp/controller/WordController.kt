@@ -27,13 +27,16 @@ open class WordController(
 
     @PostMapping("/private/createWord")
     fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>>{
-        log.info {  "word received" }
+        log.info { "word received" }
 
          val responseWord = wordService.createWord(word.toEntity())
+
+        log.info { "Word was created" }
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //  @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasPermission('READ_PRIVILEGES')")
     @GetMapping("/private/getSet/{capacity}")
     open suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
         log.info { "received request for getting set with number $capacity" }
