@@ -5,13 +5,11 @@ import cz.foglas.enligsh.wordApp.exceptions.WordNotFoundException
 import cz.foglas.enligsh.wordApp.repository.WordRepo
 import cz.foglas.enligsh.wordApp.task.priority.Priority
 import cz.foglas.enligsh.wordApp.task.priority.PriorityStrategy
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers
 import org.springframework.stereotype.Service
 
 @Service
 class WordService(
-   val wordRepo: WordRepo
+    private val wordRepo: WordRepo
 ) : WordServiceInf {
 
     /**

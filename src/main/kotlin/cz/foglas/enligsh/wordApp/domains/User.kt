@@ -2,6 +2,7 @@ package cz.foglas.enligsh.wordApp.domains
 
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
@@ -19,26 +20,29 @@ class User(
     @Column
     val email: String,
 
-    @Column
-    private var password: String
+    @Column(name = "password")
+    var securityPassword: String,
+
+    @OneToMany(mappedBy = "user")
+    var words: List<Word> = mutableListOf(),
 
 
-) : UserDetails {
+    ) : UserDetails {
     constructor() : this(null, "", "", "")
 
 
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return emptyList<GrantedAuthority>().toMutableList()
-        //  return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"))
+        //  return emptyList<GrantedAuthority>().toMutableList()
+        return mutableListOf(SimpleGrantedAuthority("ROLE_ADMIN"), SimpleGrantedAuthority("READ_PRIVILEGES"))
     }
 
     override fun getPassword(): String {
-       return password
+        return securityPassword
     }
 
     fun setPassword(password: String){
-        this.password = password
+        this.securityPassword = password
     }
 
     override fun getUsername(): String {

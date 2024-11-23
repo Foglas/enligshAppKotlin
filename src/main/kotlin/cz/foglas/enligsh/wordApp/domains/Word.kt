@@ -2,7 +2,6 @@ package cz.foglas.enligsh.wordApp.domains
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
-import org.hibernate.annotations.Immutable
 
 @Entity
 @Table(name = "word")
@@ -25,7 +24,11 @@ class Word(
     var priority: Int = 10,
 
     @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var examples : List<Example> = mutableListOf<Example>(),
+    var examples: List<Example> = mutableListOf(),
+
+    @ManyToOne
+    @JoinColumn(name = "fk_userid", referencedColumnName = "id")
+    var user: User? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wordGen")
@@ -43,7 +46,8 @@ class Word(
         var thirdForm: String?=null,
         var countable: String?=null,
         var priority: Int = 10,
-        var examples : List<Example> = mutableListOf<Example>()
+        var examples: List<Example> = mutableListOf<Example>(),
+        var user: User? = null,
         ){
 
         fun text(text: String) = apply { this.text = text }
@@ -52,6 +56,7 @@ class Word(
         fun countable(countable: String) = apply { this.countable = countable }
         fun priority(priority: Int) = apply { this.priority = priority }
         fun examples(examples: List<Example>) = apply { this.examples = examples }
+        fun user(user: User?) = apply { this.user = user }
 
         fun copyWithExamples(word: Word ,examples: MutableList<Example>) = apply {this.text = text
             this.secondForm = word.secondForm
@@ -60,6 +65,7 @@ class Word(
             this.priority = word.priority
             this.examples = examples
         }
-        fun build() = Word(this.text, this.secondForm, this.thirdForm, this.countable, this.priority, this.examples)
+        fun build() =
+            Word(this.text, this.secondForm, this.thirdForm, this.countable, this.priority, this.examples, this.user)
     }
 }
