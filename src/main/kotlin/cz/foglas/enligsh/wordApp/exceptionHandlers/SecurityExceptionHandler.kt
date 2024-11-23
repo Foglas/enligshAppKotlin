@@ -6,9 +6,11 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.security.SignatureException
+import mu.KotlinLogging
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
@@ -19,9 +21,10 @@ import reactor.core.publisher.Mono
 @Order(-2)
 class SecurityExceptionHandler(
     val objectMapper: ObjectMapper,
-) : WebExceptionHandler{
+) : WebExceptionHandler {
 
     companion object {
+        val logger = KotlinLogging.logger("Authentication")
         val context = ReactiveSecurityContextHolder.getContext()
     }
 
@@ -34,11 +37,13 @@ class SecurityExceptionHandler(
             is UnsupportedJwtException -> createResponse("Unsupported version of JWT token", exchange)
             is MalformedJwtException -> createResponse("Bad structure of the JWT token", exchange)
             is SignatureException -> createResponse("Invalid signature", exchange)
-            else -> createResponse("Occur exception while authentication by the token", exchange)
+            is BadCredentialsException -> createResponse("Credentials invalid", exchange)
+            else -> throw ex
         }
     }
 
-    private fun createResponse(message: String, exchange: ServerWebExchange): Mono<Void>{
+
+    private fun createResponse(message: String, exchange: ServerWebExchange): Mono<Void> {
         val buffer = exchange.response.bufferFactory().wrap(
             objectMapper.writeValueAsBytes(AuthenticationErrorResponse(message))
         )

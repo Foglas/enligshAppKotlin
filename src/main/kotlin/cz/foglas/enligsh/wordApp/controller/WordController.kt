@@ -1,16 +1,16 @@
 package cz.foglas.enligsh.wordApp.controller
 
-import InputWordDto
+import cz.foglas.enligsh.wordApp.data.InputWordDto
 import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.mapping.toEntity
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
 import cz.foglas.enligsh.wordApp.response.CommonSuccessResponse
+import cz.foglas.enligsh.wordApp.service.UserService
 import cz.foglas.enligsh.wordApp.service.WordCollectionFuzzySchedulerService
 import cz.foglas.enligsh.wordApp.service.WordService
 import jakarta.validation.Valid
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("\${englishApp.api.requestPath}")
 open class WordController(
     private val wordService: WordService,
+    private val userService: UserService,
     private val wordCollectionSchedulerServiceImpl: WordCollectionFuzzySchedulerService
 ) {
 
@@ -26,17 +27,17 @@ open class WordController(
     }
 
     @PostMapping("/private/createWord")
-    fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>>{
+    open fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>> {
         log.info { "word received" }
-
-         val responseWord = wordService.createWord(word.toEntity())
+        val user = userService.getUserById(word.userId!!)
+        val responseWord = wordService.createWord(word.toEntity(user))
 
         log.info { "Word was created" }
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
     //  @PreAuthorize("hasRole('ADMIN')")
-    @PreAuthorize("hasPermission('READ_PRIVILEGES')")
+    //@PreAuthorize("hasPermission('READ_PRIVILEGES')")
     @GetMapping("/private/getSet/{capacity}")
     open suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
         log.info { "received request for getting set with number $capacity" }

@@ -20,11 +20,14 @@ class User(
     @Column
     val email: String,
 
-    @Column
-    private var password: String
+    @Column(name = "password")
+    var securityPassword: String,
+
+    @OneToMany(mappedBy = "user")
+    var words: List<Word> = mutableListOf(),
 
 
-) : UserDetails {
+    ) : UserDetails {
     constructor() : this(null, "", "", "")
 
 
@@ -35,11 +38,11 @@ class User(
     }
 
     override fun getPassword(): String {
-       return password
+        return securityPassword
     }
 
     fun setPassword(password: String){
-        this.password = password
+        this.securityPassword = password
     }
 
     override fun getUsername(): String {

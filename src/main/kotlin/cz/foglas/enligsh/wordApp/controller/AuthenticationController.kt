@@ -6,6 +6,7 @@ import cz.foglas.enligsh.wordApp.domains.User
 import cz.foglas.enligsh.wordApp.service.AuthenticationServiceInf
 import cz.foglas.enligsh.wordApp.service.JwtService
 import cz.foglas.enligsh.wordApp.service.UserService
+import jakarta.validation.Valid
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,10 +20,11 @@ class AuthenticationController(
     private val authenticationService: AuthenticationServiceInf,
     private val userService: UserService,
 ) {
-
     val logger = KotlinLogging.logger("Authentication")
+
+
     @PostMapping( "/public/user/register")
-    fun register(@RequestBody user: RegisterUserDto): ResponseEntity<User>{
+    fun register(@Valid @RequestBody user: RegisterUserDto): ResponseEntity<User> {
         logger.info { "register" }
         val user = authenticationService.register(user = User(null, user.nickname, user.email,user.password))
         return ResponseEntity.ok(user)

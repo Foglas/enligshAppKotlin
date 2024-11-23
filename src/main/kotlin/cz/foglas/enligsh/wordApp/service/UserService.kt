@@ -6,8 +6,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    val userRepo: UserRepo
+    private val userRepo: UserRepo
 ) {
+
+    fun getUserById(id: Long): User {
+        return userRepo.findById(id).get()
+    }
 
     fun getUserByEmail(email: String): User? {
         return userRepo.findByEmail(email)

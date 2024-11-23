@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
+
 @Service
 class AuthenticationService(
    val userRepo: UserRepo,
@@ -16,8 +17,9 @@ class AuthenticationService(
    val passwordEncoder: BCryptPasswordEncoder
 ) : AuthenticationServiceInf {
 
+
     override fun register(user: User): User {
-        user.apply { this.password = passwordEncoder.encode(password) }
+        user.apply { this.securityPassword = passwordEncoder.encode(securityPassword) }
        return userRepo.save(user)
     }
 
