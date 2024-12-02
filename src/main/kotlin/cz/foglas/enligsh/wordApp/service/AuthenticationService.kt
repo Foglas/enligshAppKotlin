@@ -1,6 +1,7 @@
 package cz.foglas.enligsh.wordApp.service
 
 import cz.foglas.enligsh.wordApp.domains.User
+import cz.foglas.enligsh.wordApp.exceptions.UserAlreadyExists
 import cz.foglas.enligsh.wordApp.repository.UserRepo
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -12,15 +13,19 @@ import reactor.core.publisher.Mono
 
 @Service
 class AuthenticationService(
-   val userRepo: UserRepo,
-   val authenticationManager: ReactiveAuthenticationManager,
-   val passwordEncoder: BCryptPasswordEncoder
+    val userRepo: UserRepo,
+    val authenticationManager: ReactiveAuthenticationManager,
+    val passwordEncoder: BCryptPasswordEncoder
 ) : AuthenticationServiceInf {
 
 
     override fun register(user: User): User {
+        if (userRepo.existsUserByEmail(user.email)) {
+            throw UserAlreadyExists(user.email)
+        }
+
         user.apply { this.securityPassword = passwordEncoder.encode(securityPassword) }
-       return userRepo.save(user)
+        return userRepo.save(user)
     }
 
     override fun login(email: String, password: String): Mono<Authentication> {

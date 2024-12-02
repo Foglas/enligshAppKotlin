@@ -36,7 +36,7 @@ open class WordController(
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
-    //  @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasPermission('READ_PRIVILEGES')")
     @GetMapping("/private/getSet/{capacity}")
     open suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
