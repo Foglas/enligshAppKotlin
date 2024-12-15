@@ -9,7 +9,8 @@ data class InputWordDto(
     val thirdForm: String?,
     val countable: String?,
     val examples: List<ExampleDto> = emptyList(),
-    val userId: Long?
+    val userId: Long?,
+    val originalText: String?,
 ) {
     class Builder(
         var text: String? = null,
@@ -18,6 +19,7 @@ data class InputWordDto(
         var countable: String? = null,
         var examples: List<ExampleDto> = emptyList(),
         var userId: Long? = null,
+        var originalText: String? = null
     ) {
         fun text(text: String) = apply { this.text = text }
         fun secondaryForm(secondForm: String) = apply { this.secondForm = secondForm }
@@ -25,7 +27,8 @@ data class InputWordDto(
         fun countable(countable: String) = apply { this.countable = countable }
         fun examples(examples: List<ExampleDto>) = apply { this.examples = examples }
         fun userId(userId: Long?) = apply { this.userId = userId }
-        fun build() = InputWordDto(text, secondForm, thirdForm, countable, examples, userId)
+        fun originalText(originalText: String) = apply { this.originalText = originalText }
+        fun build() = InputWordDto(text, secondForm, thirdForm, countable, examples, userId, originalText)
 
     }
 }

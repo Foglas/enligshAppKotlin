@@ -1,6 +1,7 @@
 package cz.foglas.enligsh.wordApp.controller
 
 import cz.foglas.enligsh.wordApp.data.security.LoginUserDto
+import cz.foglas.enligsh.wordApp.data.security.OutputUserDto
 import cz.foglas.enligsh.wordApp.data.security.RegisterUserDto
 import cz.foglas.enligsh.wordApp.domains.User
 import cz.foglas.enligsh.wordApp.service.AuthenticationServiceInf
@@ -31,14 +32,15 @@ class AuthenticationController(
     }
 
     @PostMapping("/public/user/login")
-    fun login(@RequestBody loginUserDto: LoginUserDto): Mono<ResponseEntity<String>> {
+    fun login(@RequestBody loginUserDto: LoginUserDto): Mono<ResponseEntity<OutputUserDto>> {
         logger.info { "hello login" }
 
         val user = authenticationService.login(loginUserDto.email, loginUserDto.password)
+        val userId = userService.getUserByEmail(loginUserDto.email)?.id!!
 
-        return user.flatMap { user ->
+        return user.flatMap {
             val userFromDb = userService.getUserByEmail(loginUserDto.email)
-            Mono.just(ResponseEntity.ok(jwtService.generateToken(userFromDb!!)))
+            Mono.just(ResponseEntity.ok(OutputUserDto(jwtService.generateToken(userFromDb!!), userId)))
         }
     }
 

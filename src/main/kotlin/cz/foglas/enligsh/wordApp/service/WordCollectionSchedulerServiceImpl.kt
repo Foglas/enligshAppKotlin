@@ -3,7 +3,10 @@ package cz.foglas.enligsh.wordApp.service
 import cz.foglas.enligsh.wordApp.domains.Word
 import cz.foglas.enligsh.wordApp.exceptions.NotEnoughWordsException
 import cz.foglas.enligsh.wordApp.repository.WordRepo
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.orm.jpa.JpaSystemException
@@ -20,7 +23,7 @@ class WordCollectionSchedulerServiceImpl(
     private val log = KotlinLogging.logger("WordCollectionScheduler")
 
 
-    override suspend fun getWordCollection(capacity: Int): List<Word> {
+    override suspend fun getWordCollection(capacity: Int, userId: Long): List<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
         var knownWords = mutableListOf<Word>()
@@ -32,11 +35,11 @@ class WordCollectionSchedulerServiceImpl(
        log.info { "Set: total capacity: $capacity knowCapacity: $knowCapacity unknownCapacity: $unknownCapacity" }
 
        val knowWordsJob = scope.async(context + CoroutineName("IOWordKnowWords")){
-           knownWords  = wordRepo.getKnownWords(surface,knowCapacity)
+           knownWords = wordRepo.getKnownWords(surface, knowCapacity, userId)
        }
 
        val unknownWordsJob = scope.async(context + CoroutineName("IOWordUnknownWords")) {
-           unKnownWords =  wordRepo.getRandomUnknownWords(surface,unknownCapacity)
+           unKnownWords = wordRepo.getRandomUnknownWords(surface, unknownCapacity, userId)
        }
 
        try {
@@ -52,7 +55,7 @@ class WordCollectionSchedulerServiceImpl(
 
        if (gettedListSize < capacity) {
            val additionalWordCapacity = capacity - gettedListSize
-           knownWords.addAll(wordRepo.getWords(additionalWordCapacity))
+           knownWords.addAll(wordRepo.getWords(additionalWordCapacity, userId))
            log.info { "Set after getting: total capacity: $capacity knowCapacity: ${knownWords.size + additionalWordCapacity} unknownCapacity: ${unKnownWords.size}" }
        }
 

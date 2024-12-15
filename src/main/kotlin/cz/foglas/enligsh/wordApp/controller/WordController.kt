@@ -38,10 +38,10 @@ open class WordController(
 
     //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasPermission('READ_PRIVILEGES')")
-    @GetMapping("/private/getSet/{capacity}")
-    open suspend fun getWordSet(@PathVariable capacity: Int): List<InputWordDto> {
+    @GetMapping("/private/getSet/{capacity}/{userId}")
+    open suspend fun getWordSet(@PathVariable capacity: Int, @PathVariable userId: Long): List<InputWordDto> {
         log.info { "received request for getting set with number $capacity" }
-        return wordCollectionSchedulerServiceImpl.getWordCollection(capacity)
+        return wordCollectionSchedulerServiceImpl.getWordCollection(capacity, userId)
             .map { word -> word.toDto() }.toList()
     }
 

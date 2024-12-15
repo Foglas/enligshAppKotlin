@@ -6,6 +6,7 @@ import cz.foglas.enligsh.wordApp.repository.UserRepo
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -29,8 +30,9 @@ class AuthenticationService(
     }
 
     override fun login(email: String, password: String): Mono<Authentication> {
+        userRepo.findByEmail(email) ?: throw UsernameNotFoundException("Not found")
         return authenticationManager.authenticate(UsernamePasswordAuthenticationToken(email, password))
-        // return userRepo.findByEmail(email)?:throw UsernameNotFoundException("Not found")
+
     }
 
 

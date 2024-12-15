@@ -20,7 +20,7 @@ open class WordCollectionFuzzySchedulerService(
     val log = KotlinLogging.logger("FuzzyScheduler")
     val pattern = Regex(".*_[^_]+_.*")
 
-    override suspend fun getWordCollection(capacity: Int): Collection<Word>{
+    override suspend fun getWordCollection(capacity: Int, userId: Long): Collection<Word> {
         val context = Dispatchers.IO
         val scope = CoroutineScope(context)
 
@@ -34,9 +34,19 @@ open class WordCollectionFuzzySchedulerService(
                 log.info { "${element.key}: $innerCapacity" }
                 val range = fuzzyWordConf.getRange(WordFuzzy.valueOf(element.key))
               when {
-                  element.key.matches(pattern) -> wordRepo.getRandomWordsWithRange( range.a, range.b, innerCapacity)
-                  element.key == WordFuzzy.RATIO_KNOW.name -> wordRepo.getKnownWords(range.b, innerCapacity)
-                  element.key == WordFuzzy.RATIO_UNKNOWN.name -> wordRepo.getRandomUnknownWords(range.a, innerCapacity)
+                  element.key.matches(pattern) -> wordRepo.getRandomWordsWithRange(
+                      range.a,
+                      range.b,
+                      innerCapacity,
+                      userId
+                  )
+
+                  element.key == WordFuzzy.RATIO_KNOW.name -> wordRepo.getKnownWords(range.b, innerCapacity, userId)
+                  element.key == WordFuzzy.RATIO_UNKNOWN.name -> wordRepo.getRandomUnknownWords(
+                      range.a,
+                      innerCapacity,
+                      userId
+                  )
 
                   else -> log.info { "Ratio doesn´t recognize" }
               }
@@ -54,7 +64,7 @@ open class WordCollectionFuzzySchedulerService(
 
       if (finalListOfWords.size < capacity){
           val additionalCapacity = capacity - finalListOfWords.size
-          val words = wordRepo.getWords(additionalCapacity)
+          val words = wordRepo.getWords(additionalCapacity, userId)
           finalListOfWords.addAll(words);
       }
 

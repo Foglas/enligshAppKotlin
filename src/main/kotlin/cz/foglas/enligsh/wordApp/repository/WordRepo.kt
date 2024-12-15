@@ -8,16 +8,19 @@ interface WordRepo : CrudRepository<Word, Long> {
 
     fun getWordById(id: Long) : Word
 
-    @Query("SELECT * FROM getrandomwordwellknown(:surface, :capacity)", nativeQuery = true)
-    fun getKnownWords(surface: Int, capacity: Int) : MutableList<Word>
+    @Query("SELECT * FROM getrandomwordwellknown(:surface, :capacity, :userId)", nativeQuery = true)
+    fun getKnownWords(surface: Int, capacity: Int, userId: Long): MutableList<Word>
 
-    @Query("SELECT * FROM getrandomwordswithrange(:lowerSurface, :higherSurface, :capacity)", nativeQuery = true)
-    fun getRandomWordsWithRange(lowerSurface: Int, higherSurface: Int, capacity: Int) : MutableList<Word>
+    @Query(
+        "SELECT * FROM getrandomwordswithrange(:lowerSurface, :higherSurface, :capacity, :userId)",
+        nativeQuery = true
+    )
+    fun getRandomWordsWithRange(lowerSurface: Int, higherSurface: Int, capacity: Int, userId: Long): MutableList<Word>
 
-    @Query("SELECT * FROM getrandomunknownwords(:surface, :capacity)", nativeQuery = true)
-    fun getRandomUnknownWords(surface: Int, capacity: Int) : MutableList<Word>
+    @Query("SELECT * FROM getrandomunknownwords(:surface, :capacity, :userId)", nativeQuery = true)
+    fun getRandomUnknownWords(surface: Int, capacity: Int, userId: Long): MutableList<Word>
 
-    @Query("SELECT * FROM getRandomWords(:capacity)", nativeQuery = true)
-    fun getWords(capacity: Int) : MutableList<Word>
+    @Query("SELECT * FROM getRandomWords(:capacity, :userId)", nativeQuery = true)
+    fun getWords(capacity: Int, userId: Long): MutableList<Word>
 
 }

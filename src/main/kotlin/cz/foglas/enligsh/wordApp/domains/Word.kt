@@ -26,6 +26,9 @@ class Word(
     @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var examples: List<Example> = mutableListOf(),
 
+    @Column(name = "originalText")
+    var originalText: String?,
+
     @ManyToOne
     @JoinColumn(name = "fk_userid", referencedColumnName = "id")
     var user: User? = null,
@@ -48,6 +51,7 @@ class Word(
         var priority: Int = 10,
         var examples: List<Example> = mutableListOf<Example>(),
         var user: User? = null,
+        var originalText: String? = null
         ){
 
         fun text(text: String) = apply { this.text = text }
@@ -57,6 +61,7 @@ class Word(
         fun priority(priority: Int) = apply { this.priority = priority }
         fun examples(examples: List<Example>) = apply { this.examples = examples }
         fun user(user: User?) = apply { this.user = user }
+        fun originalText(text: String) = apply { this.originalText = text }
 
         fun copyWithExamples(word: Word ,examples: MutableList<Example>) = apply {this.text = text
             this.secondForm = word.secondForm
@@ -64,8 +69,19 @@ class Word(
             this.countable = word.countable
             this.priority = word.priority
             this.examples = examples
+            this.user = word.user
+            this.originalText = word.originalText
         }
         fun build() =
-            Word(this.text, this.secondForm, this.thirdForm, this.countable, this.priority, this.examples, this.user)
+            Word(
+                this.text,
+                this.secondForm,
+                this.thirdForm,
+                this.countable,
+                this.priority,
+                this.examples,
+                this.originalText,
+                this.user
+            )
     }
 }
