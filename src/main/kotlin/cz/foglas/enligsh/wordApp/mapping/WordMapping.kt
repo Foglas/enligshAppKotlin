@@ -2,13 +2,14 @@ package cz.foglas.enligsh.wordApp.mapping
 
 import cz.foglas.enligsh.wordApp.data.ExampleDto
 import cz.foglas.enligsh.wordApp.data.InputWordDto
+import cz.foglas.enligsh.wordApp.data.OutputWordDto
 import cz.foglas.enligsh.wordApp.domains.Example
 import cz.foglas.enligsh.wordApp.domains.User
 import cz.foglas.enligsh.wordApp.domains.Word
 
-fun Word.toDto(): InputWordDto {
+fun Word.toDto(): OutputWordDto {
     var outputListOfExamples = examples.map { example -> ExampleDto(example.text) }.toList()
-    var outputWord = InputWordDto.Builder()
+    var outputWord = OutputWordDto.Builder()
         .text(text.orEmpty())
         .secondaryForm(secondForm.orEmpty())
         .thirdForm(thirdForm.orEmpty())
@@ -16,6 +17,7 @@ fun Word.toDto(): InputWordDto {
         .examples(outputListOfExamples)
         .userId(user?.id)
         .originalText(originalText.orEmpty())
+        .wordId(id)
         .build()
     return outputWord
 }

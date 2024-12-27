@@ -48,7 +48,7 @@ class WordService(
             priority.plus(value)
         }
         updateWord(word)
-        return resultService.recomputeExerciseResults(ExerciseResultType.SUCCESS, exerciseId, word)
+        return resultService.recomputeExerciseResults(ExerciseResultType.FAILURE, exerciseId, word)
     }
 
     /**
@@ -62,7 +62,7 @@ class WordService(
             priority.minus(value)
         }
         updateWord(word)
-        return resultService.recomputeExerciseResults(ExerciseResultType.FAILURE, exerciseId, word)
+        return resultService.recomputeExerciseResults(ExerciseResultType.SUCCESS, exerciseId, word)
     }
 
 

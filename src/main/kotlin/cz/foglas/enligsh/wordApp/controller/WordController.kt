@@ -2,6 +2,7 @@ package cz.foglas.enligsh.wordApp.controller
 
 import cz.foglas.enligsh.wordApp.data.ExerciseDto
 import cz.foglas.enligsh.wordApp.data.InputWordDto
+import cz.foglas.enligsh.wordApp.data.OutputWordDto
 import cz.foglas.enligsh.wordApp.data.PriorityDto
 import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.mapping.toEntity
@@ -29,7 +30,7 @@ open class WordController(
     }
 
     @PostMapping("/private/createWord")
-    open fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<InputWordDto>> {
+    open fun createWord(@Valid @RequestBody word: InputWordDto): ResponseEntity<CommonResponseInf<OutputWordDto>> {
         log.info { "word received" }
         val user = userService.getUserById(word.userId!!)
         val responseWord = wordService.createWord(word.toEntity(user))
@@ -41,10 +42,11 @@ open class WordController(
     //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasPermission('READ_PRIVILEGES')")
     @GetMapping("/private/getSet/{capacity}/{userId}")
-    open suspend fun getWordSet(@PathVariable capacity: Int, @PathVariable userId: Long): List<InputWordDto> {
+    open suspend fun getWordSet(@PathVariable capacity: Int, @PathVariable userId: Long): List<OutputWordDto> {
         log.info { "received request for getting set with number $capacity" }
-        return wordCollectionSchedulerServiceImpl.getWordCollection(capacity, userId)
+        val exercises = wordCollectionSchedulerServiceImpl.getWordCollection(capacity, userId)
             .map { word -> word.toDto() }.toList()
+        return exercises
     }
 
     @GetMapping("/private/text")
