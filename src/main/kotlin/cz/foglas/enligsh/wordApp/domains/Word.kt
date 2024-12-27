@@ -33,13 +33,16 @@ class Word(
     @JoinColumn(name = "fk_userid", referencedColumnName = "id")
     var user: User? = null,
 
+    @ManyToMany(mappedBy = "words")
+    var exercises: List<ExerciseResult> = mutableListOf(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wordGen")
     @SequenceGenerator(name = "wordGen", sequenceName = "wordid", allocationSize = 1, initialValue = 1)
-    var id: Long? = null,
+    var id: Long?,
 
     ){
-    constructor() : this(null, null, null, null, 10, mutableListOf(), null)
+    constructor() : this(null, null, null, null, 10, mutableListOf(), null, null, id = null)
 
 
 
@@ -51,7 +54,9 @@ class Word(
         var priority: Int = 10,
         var examples: List<Example> = mutableListOf<Example>(),
         var user: User? = null,
-        var originalText: String? = null
+        var originalText: String? = null,
+        var exercises: MutableList<ExerciseResult> = mutableListOf(),
+        var id: Long? = null
         ){
 
         fun text(text: String) = apply { this.text = text }
@@ -62,7 +67,8 @@ class Word(
         fun examples(examples: List<Example>) = apply { this.examples = examples }
         fun user(user: User?) = apply { this.user = user }
         fun originalText(text: String) = apply { this.originalText = text }
-
+        fun exercises(exercises: MutableList<ExerciseResult>) = apply { this.exercises = exercises }
+        fun id(id: Long?) = apply { this.id = id }
         fun copyWithExamples(word: Word ,examples: MutableList<Example>) = apply {this.text = text
             this.secondForm = word.secondForm
             this.thirdForm = word.thirdForm
@@ -81,7 +87,9 @@ class Word(
                 this.priority,
                 this.examples,
                 this.originalText,
-                this.user
+                this.user,
+                this.exercises,
+                this.id
             )
     }
 }

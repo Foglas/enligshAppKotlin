@@ -22,8 +22,11 @@ class User(
     @Column(name = "password")
     var securityPassword: String,
 
+    @OneToOne(mappedBy = "user")
+    var globalResult: GlobalResults? = null,
+
     @OneToMany(mappedBy = "user")
-    var words: List<Word> = mutableListOf(),
+    var words: List<Word> = mutableListOf()
 
 
     ) : UserDetails {

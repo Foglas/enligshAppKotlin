@@ -1,6 +1,8 @@
 package cz.foglas.enligsh.wordApp.controller
 
+import cz.foglas.enligsh.wordApp.data.ExerciseDto
 import cz.foglas.enligsh.wordApp.data.InputWordDto
+import cz.foglas.enligsh.wordApp.data.PriorityDto
 import cz.foglas.enligsh.wordApp.mapping.toDto
 import cz.foglas.enligsh.wordApp.mapping.toEntity
 import cz.foglas.enligsh.wordApp.response.CommonResponseInf
@@ -51,12 +53,14 @@ open class WordController(
     }
 
     @PostMapping("/private/priority/plus")
-    suspend fun increasePriority(@RequestBody id: Long){
-        wordService.increasePriority(1, id)
+    suspend fun increasePriority(@RequestBody priorityDto: PriorityDto): ResponseEntity<ExerciseDto> {
+        val exercise = wordService.increasePriority(1, priorityDto.wordId, priorityDto.exerciseId)
+        return ResponseEntity.ok(ExerciseDto(exercise.id!!))
     }
 
     @PostMapping("/private/priority/minus")
-    suspend fun decreasePriority(@RequestBody id: Long){
-        wordService.decreasePriority(1, id)
+    suspend fun decreasePriority(@RequestBody priorityDto: PriorityDto): ResponseEntity<ExerciseDto> {
+        val exercise = wordService.decreasePriority(1, priorityDto.wordId, priorityDto.exerciseId)
+        return ResponseEntity.ok(ExerciseDto(exercise.id!!))
     }
 }
