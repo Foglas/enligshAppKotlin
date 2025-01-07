@@ -1,7 +1,6 @@
 package cz.foglas.enligsh.wordApp.exceptions
 
-
-class WordNotFoundException(val inputMessage: String) : Exception() {
+class DeleteWasNotSuccessful(val inputMessage: String) : Exception() {
 
     override val message: String
         get() = inputMessage

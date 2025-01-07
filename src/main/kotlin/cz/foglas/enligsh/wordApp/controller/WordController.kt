@@ -15,6 +15,7 @@ import jakarta.validation.Valid
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 
 @RestController
@@ -39,6 +40,16 @@ open class WordController(
          return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
     }
 
+    @PostMapping("/private/updateWord")
+    open fun updateWord(@Valid @RequestBody word: OutputWordDto): ResponseEntity<CommonResponseInf<OutputWordDto>> {
+        log.info { "word received" }
+        val user = userService.getUserById(word.userId!!)
+        val responseWord = wordService.updateWord(word.toEntity(user))
+
+        log.info { "Word was updated" }
+        return ResponseEntity.ok(CommonSuccessResponse(responseWord.toDto()))
+    }
+
     //@PreAuthorize("hasAuthority('ADMIN')")
     //@PreAuthorize("hasPermission('READ_PRIVILEGES')")
     @GetMapping("/private/getSet/{capacity}/{userId}")
@@ -47,6 +58,17 @@ open class WordController(
         val exercises = wordCollectionSchedulerServiceImpl.getWordCollection(capacity, userId)
             .map { word -> word.toDto() }.toList()
         return exercises
+    }
+
+    @GetMapping("/private/words/user/{id}")
+    fun getAllWordsByUserId(@PathVariable("id") userId: Long): List<OutputWordDto> {
+        return wordService.getWordsByUserId(userId).map { it.toDto() }
+    }
+
+
+    @DeleteMapping("/private/words/delete/{id}")
+    fun deleteWordById(@PathVariable("id") id: Long, user: Principal) {
+        wordService.deleteWord(id, user)
     }
 
     @GetMapping("/private/text")

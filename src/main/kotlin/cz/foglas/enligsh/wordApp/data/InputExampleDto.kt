@@ -1,5 +1,5 @@
 package cz.foglas.enligsh.wordApp.data
 
-data class ExampleDto(
+data class InputExampleDto(
     val text: String
 )

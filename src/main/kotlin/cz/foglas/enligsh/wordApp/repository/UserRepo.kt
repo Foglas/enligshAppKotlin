@@ -2,7 +2,9 @@ package cz.foglas.enligsh.wordApp.repository
 
 import cz.foglas.enligsh.wordApp.domains.User
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
+@Repository
 interface UserRepo : CrudRepository<User, Long>{
 
     fun findByEmail(email: String): User?

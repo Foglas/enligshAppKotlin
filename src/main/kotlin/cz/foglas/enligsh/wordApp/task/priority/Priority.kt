@@ -22,6 +22,9 @@ class Priority(private val strategy: PriorityStrategy,
     }
 
     fun minus(value: Int): Priority{
+        if (priorityValue == 1) {
+            return Priority(strategy, priorityValue)
+        }
         return Priority(strategy ,strategyClazz.minus(value).priorityValue)
     }
 

@@ -23,7 +23,7 @@ class Word(
     @Column(name = "priority")
     var priority: Int = 10,
 
-    @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "word", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     var examples: List<Example> = mutableListOf(),
 
     @Column(name = "originalText")

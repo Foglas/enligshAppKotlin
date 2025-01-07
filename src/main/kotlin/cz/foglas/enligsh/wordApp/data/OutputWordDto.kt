@@ -8,7 +8,7 @@ data class OutputWordDto(
     val secondForm: String?,
     val thirdForm: String?,
     val countable: String?,
-    val examples: List<ExampleDto> = emptyList(),
+    val examples: List<OutputExampleDto> = emptyList(),
     val userId: Long?,
     val originalText: String?,
     val wordId: Long?
@@ -18,7 +18,7 @@ data class OutputWordDto(
         var secondForm: String? = null,
         var thirdForm: String? = null,
         var countable: String? = null,
-        var examples: List<ExampleDto> = emptyList(),
+        var examples: List<OutputExampleDto> = emptyList(),
         var userId: Long? = null,
         var originalText: String? = null,
         var wordId: Long? = null
@@ -27,7 +27,7 @@ data class OutputWordDto(
         fun secondaryForm(secondForm: String) = apply { this.secondForm = secondForm }
         fun thirdForm(thirdForm: String) = apply { this.thirdForm = thirdForm }
         fun countable(countable: String) = apply { this.countable = countable }
-        fun examples(examples: List<ExampleDto>) = apply { this.examples = examples }
+        fun examples(examples: List<OutputExampleDto>) = apply { this.examples = examples }
         fun userId(userId: Long?) = apply { this.userId = userId }
         fun wordId(wordId: Long?) = apply { this.wordId = wordId }
         fun originalText(originalText: String) = apply { this.originalText = originalText }

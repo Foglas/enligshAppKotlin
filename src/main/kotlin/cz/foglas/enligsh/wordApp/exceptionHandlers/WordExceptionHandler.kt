@@ -1,5 +1,6 @@
 package cz.foglas.enligsh.wordApp.exceptionHandlers
 
+import cz.foglas.enligsh.wordApp.exceptions.DeleteWasNotSuccessful
 import cz.foglas.enligsh.wordApp.exceptions.NotEnoughWordsException
 import cz.foglas.enligsh.wordApp.response.CommonErrorTextResponse
 import cz.foglas.enligsh.wordApp.response.CommonErrorValidationResponse
@@ -22,6 +23,11 @@ open class WordExceptionHandler {
 
     @ExceptionHandler( NotEnoughWordsException::class)
     open fun notEnoughWordHandler(ex: NotEnoughWordsException): ResponseEntity<Any> {
+        return ResponseEntity.badRequest().body(CommonErrorTextResponse(ex.message))
+    }
+
+    @ExceptionHandler(DeleteWasNotSuccessful::class)
+    open fun notEnoughWordHandler(ex: DeleteWasNotSuccessful): ResponseEntity<Any> {
         return ResponseEntity.badRequest().body(CommonErrorTextResponse(ex.message))
     }
 }

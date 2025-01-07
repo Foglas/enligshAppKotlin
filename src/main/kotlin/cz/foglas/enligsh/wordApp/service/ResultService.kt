@@ -1,16 +1,28 @@
 package cz.foglas.enligsh.wordApp.service
 
+import cz.foglas.enligsh.wordApp.data.ResultDto
 import cz.foglas.enligsh.wordApp.domains.ExerciseResult
 import cz.foglas.enligsh.wordApp.domains.Word
 import cz.foglas.enligsh.wordApp.repository.ExerciseResultRepo
-import cz.foglas.enligsh.wordApp.repository.GlobalResultsRepo
+import cz.foglas.enligsh.wordApp.repository.UserRepo
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ResultService(
+open class ResultService(
     private val exerciseRepo: ExerciseResultRepo,
-    private val globalResultsRepo: GlobalResultsRepo,
+    private val userRepo: UserRepo
 ) {
+
+    @Transactional
+    open fun getResultsByUserId(id: Long): List<ResultDto> {
+        return userRepo.findById(id).get().words.flatMap { it.exercises }
+            .map { ResultDto(it.successCount, it.failedCount) }
+    }
+
+    open fun getResultsById(id: Long): ExerciseResult {
+        return exerciseRepo.getById(id)
+    }
 
     private fun recomputeSuccessExerciseResults(exercise: ExerciseResult, word: Word): ExerciseResult {
         exercise.apply {
@@ -28,7 +40,7 @@ class ResultService(
         return exercise
     }
 
-    fun recomputeExerciseResults(type: ExerciseResultType, exerciseId: Long?, word: Word): ExerciseResult {
+    open fun recomputeExerciseResults(type: ExerciseResultType, exerciseId: Long?, word: Word): ExerciseResult {
         return if (exerciseId == null) {
             when (type) {
                 ExerciseResultType.SUCCESS -> exerciseRepo.save(ExerciseResult(1, 0, mutableListOf(word), null))
